@@ -8,6 +8,21 @@
 
 using namespace std;
 
+struct drillingArray {
+	int capacity; // maximum capacity, in records
+	drillingRecord* data = NULL; // pointer to array of records
+};
+
+struct drillingRecord {
+	double nums[16]; // holds the numeric data, in column order
+	std::string strings[2]; // holds the string data, in column order
+};
+
+drillingArray* doubleDrillingArray(drillingArray* currentDrillingArray)
+{
+	//TODO: COMPLETE RESIZING OF DRILLING ARRAY
+}
+
 // Declaring functions for main
 bool hasDifferentDate(string dataValue, int row);
 bool hasUniqueTime(string dataValue);
