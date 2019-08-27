@@ -8,35 +8,54 @@
 
 using namespace std;
 
-struct drillingArray {
-	int capacity; // maximum capacity, in records
-	drillingRecord* data = NULL; // pointer to array of records
-};
 
 struct drillingRecord {
 	double nums[16]; // holds the numeric data, in column order
 	std::string strings[2]; // holds the string data, in column order
 };
 
+struct drillingArray {
+	int capacity; // maximum capacity, in records
+	drillingRecord* data; // pointer to array of records
+};
+
 drillingArray* doubleDrillingArray(drillingArray* currentDrillingArray)
 {
-	//TODO: COMPLETE RESIZING OF DRILLING ARRAY
+	drillingArray* doubledArray = new drillingArray;
+
+	int newCap = currentDrillingArray->capacity * 2;
+	doubledArray->capacity = newCap;
+	doubledArray->data = new drillingRecord[newCap];
+
+	for (int i = 0; i < currentDrillingArray->capacity; i++) 
+	{
+		doubledArray->data[i] = currentDrillingArray->data[i];
+	}
+
+	delete currentDrillingArray;
+	return doubledArray;
 }
 
 // Declaring functions for main
 bool hasDifferentDate(string dataValue, int row);
 bool hasUniqueTime(string dataValue);
 bool isValidFloatData(string dataValue);
+void saveRecord(string data, drillingArray* array, int row);
+void initiallizeDrillingArray(drillingArray* array);
 
-int main(/*int argc, char *argv[]*/)
+int main(int argc, char *argv[])
 {
 	// Setting cin with the file stream as buffer.
 
 	// Alternative way to redirect cin to file
-	/*
+	
 	ifstream inFile(argv[1]);
 	cin.rdbuf(inFile.rdbuf());
-	*/
+	
+
+	// Declare array for records to store them
+	drillingArray* drillData = new drillingArray;
+	initiallizeDrillingArray(drillData);
 
 	//Skip first line according to filetype & project specs.
 	string line = "";
@@ -45,6 +64,7 @@ int main(/*int argc, char *argv[]*/)
 
 	// Loop through each row in the CSV.
 	int row = 0;
+	int validLines = 0;
 	while (getline(cin, line))
 	{
 		//Increment row.
@@ -78,7 +98,7 @@ int main(/*int argc, char *argv[]*/)
 			}
 
 			// Check if the data lines has duplicate time stamps.
-			if (column == 2
+			/*if (column == 2
 				&& !differentDate
 				&& hasUniqueTime(dataValue)
 				&& row > 1
@@ -102,7 +122,7 @@ int main(/*int argc, char *argv[]*/)
 				dataValue = "";
 				skipRow = true;
 				continue;
-			}
+			}*/
 
 			// Reset data Value for loop
 			dataValue = "";
@@ -118,7 +138,9 @@ int main(/*int argc, char *argv[]*/)
 					line.at(i) = ';';
 				}
 			}
-			printf("%s\n", line.c_str());
+			//printf("%s\n", line.c_str());
+			saveRecord(line, drillData, validLines);
+			validLines++;
 		}
 
 		// Reset line for loop
@@ -188,4 +210,33 @@ bool isValidFloatData(string line)
 		count++;
 	}
 	return isValid;
+}
+
+void saveRecord(string data, drillingArray* array, int lines) 
+{
+	drillingRecord* dr = new drillingRecord;
+	
+	stringstream stringStrm(data);
+
+	string value = "";
+	int index = 0;
+	while (getline(stringStrm, value, ';')) 
+	{
+		if (index < 2) 
+		{
+			dr->strings[index] = value;
+		}
+		else if (index < 18) 
+		{
+			dr->nums[index - 2] = stoi(value);
+		}
+	}
+	
+	array->data[lines] = *dr;
+}
+
+void initiallizeDrillingArray(drillingArray* array) 
+{
+	array->capacity = 10;
+	array->data = new drillingRecord[10];
 }
