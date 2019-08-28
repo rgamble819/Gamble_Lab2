@@ -1,13 +1,12 @@
 // Gamble_Lab1.cpp : This file contains the 'main' function. Program execution begins and ends there.
-
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iomanip>
 #include <set>
 
 using namespace std;
-
 
 struct drillingRecord {
 	double nums[16]; // holds the numeric data, in column order
@@ -42,6 +41,7 @@ bool hasUniqueTime(string dataValue);
 bool isValidFloatData(string dataValue);
 void saveRecord(string data, drillingArray* array, int row);
 void initiallizeDrillingArray(drillingArray* array);
+void printArray(drillingArray* array, int elements);
 
 int main(int argc, char *argv[])
 {
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			}
 
 			// Check if the data lines has duplicate time stamps.
-			/*if (column == 2
+			if (column == 2
 				&& !differentDate
 				&& hasUniqueTime(dataValue)
 				&& row > 1
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 				dataValue = "";
 				skipRow = true;
 				continue;
-			}*/
+			}
 
 			// Reset data Value for loop
 			dataValue = "";
@@ -138,14 +138,13 @@ int main(int argc, char *argv[])
 					line.at(i) = ';';
 				}
 			}
-			//printf("%s\n", line.c_str());
 			saveRecord(line, drillData, validLines);
 			validLines++;
 		}
-
 		// Reset line for loop
 		line = "";
 	}
+	printArray(drillData, validLines);
 	return 0;
 }
 
@@ -214,9 +213,14 @@ bool isValidFloatData(string line)
 
 void saveRecord(string data, drillingArray* array, int lines) 
 {
-	drillingRecord* dr = new drillingRecord;
+	drillingRecord* drillRecord = new drillingRecord;
 	
 	stringstream stringStrm(data);
+
+	if (lines >= array->capacity) 
+	{
+		array = doubleDrillingArray(array);
+	}
 
 	string value = "";
 	int index = 0;
@@ -224,19 +228,45 @@ void saveRecord(string data, drillingArray* array, int lines)
 	{
 		if (index < 2) 
 		{
-			dr->strings[index] = value;
+			drillRecord->strings[index] = value;
 		}
 		else if (index < 18) 
 		{
-			dr->nums[index - 2] = stoi(value);
+			drillRecord->nums[index - 2] = stof(value);
 		}
+		index++;
 	}
-	
-	array->data[lines] = *dr;
+	array->data[lines] = *drillRecord;
 }
 
 void initiallizeDrillingArray(drillingArray* array) 
 {
 	array->capacity = 10;
 	array->data = new drillingRecord[10];
+}
+
+void printArray(drillingArray* array, int elements) 
+{
+	int index = elements;
+	while(index >= 0){
+
+		string line = "";
+		drillingRecord record = array->data[index - 1];
+		for (int j = 0; j < 18; j++) 
+		{
+			if (j < 2)
+			{
+				cout << record.strings[j].c_str() << ";";
+			}
+			else if (j < 15) 
+			{
+				cout << record.nums[j] << ";";
+			}
+			else if (j == 15) 
+			{
+				cout << record.nums[j] << "\n";
+			}
+		}
+		index--;
+	}
 }
