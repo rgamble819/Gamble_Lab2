@@ -213,15 +213,17 @@ bool isValidFloatData(string line)
 
 void saveRecord(string data, drillingArray* array, int lines) 
 {
+	// Create new drilling record
 	drillingRecord* drillRecord = new drillingRecord;
 	
 	stringstream stringStrm(data);
 
 	if (lines >= array->capacity) 
 	{
-		array = doubleDrillingArray(array);
+		array = doubleDrillingArray(array); // Double array if needed
 	}
 
+	// Add data values to record
 	string value = "";
 	int index = 0;
 	while (getline(stringStrm, value, ';')) 
@@ -236,15 +238,17 @@ void saveRecord(string data, drillingArray* array, int lines)
 		}
 		index++;
 	}
-	array->data[lines] = *drillRecord;
+	array->data[lines] = *drillRecord; // Add record to array
 }
 
+// initiallize array
 void initiallizeDrillingArray(drillingArray* array) 
 {
 	array->capacity = 10;
 	array->data = new drillingRecord[10];
 }
 
+// Print the array in reverse order
 void printArray(drillingArray* array, int elements) 
 {
 	int index = elements;
